@@ -1,0 +1,16 @@
+{
+    "name": "Readers",
+    "columns": [
+        {
+            "name": "id",
+            "type": "int",
+            "isPrimary": true
+        },
+        {
+            "name": "name",
+            "type": "string",
+            "isPrimary": false
+        }
+    ]
+}
+	
