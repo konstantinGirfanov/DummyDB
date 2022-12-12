@@ -27,7 +27,7 @@ namespace DummyDB
 
                 for (int i = 1; i < 3; i++)
                 {
-                    if (line[i] is not string)
+                    if (line[i] is not string || double.TryParse(line[i], out _))
                     {
                         columns.Add(i);
                     }
