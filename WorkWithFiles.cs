@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using DummyDB;
+﻿using System.Text;
 
 namespace DummyDB
 {
@@ -247,7 +243,7 @@ namespace DummyDB
 
                 for (int i = 2; i < 4; i++)
                 {
-                    if (!DateTime.TryParse(line[i],  out _))
+                    if (!DateTime.TryParse(line[i], out _))
                     {
                         columns.Add(i);
                     }
