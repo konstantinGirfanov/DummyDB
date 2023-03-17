@@ -2,12 +2,12 @@
 {
     class Book
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Author { get; set; }
-        public int Year { get; set; }
-        public int Cupboard { get; set; }
-        public int Shelf { get; set; }
+        public int Id { get; init; }
+        public string Name { get; init; }
+        public string Author { get; init; }
+        public int Year { get; init; }
+        public int Cupboard { get; init; }
+        public int Shelf { get; init; }
 
         public Book(int id, string name, string author, int year, int cupboard, int shelf)
         {

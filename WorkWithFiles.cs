@@ -2,85 +2,93 @@
 
 namespace DummyDB
 {
-    class WorkWithFiles
+    static class WorkWithFiles
     {
         public static Book[] GetBooks(string path)
         {
-            string[] lines = File.ReadAllLines(path);
+            string[] uncheckedData = File.ReadAllLines(path);
 
-            List<string> result = new();
-
-            for (int i = 1; i < lines.Length; i++)
+            List<string> correcData = new();
+            for (int i = 1; i < uncheckedData.Length; i++)
             {
-                Console.WriteLine($"Информация о {i} строке данных книг: {GetInformationCorrectnessBookData(lines[i].Split(';'))}");
-                if (GetInformationCorrectnessBookData(lines[i].Split(';')) == "Данные в порядке.")
+                string correctness = GetInformationCorrectnessBookData(uncheckedData[i].Split(';'));
+
+                Console.WriteLine($"Информация о {i} строке данных книг: {correctness}");
+                if (correctness == "Данные в порядке.")
                 {
-                    result.Add(lines[i]);
+                    correcData.Add(uncheckedData[i]);
                 }
             }
 
-            string[] res = result.ToArray();
-            Book[] books = new Book[res.Length];
-
-            for (int i = 0; i < res.Length; i++)
+            Book[] books = new Book[correcData.Count];
+            for (int i = 0; i < correcData.Count; i++)
             {
-                books[i] = new Book(int.Parse(res[i].Split(';')[0]),
-                    res[i].Split(';')[1],
-                    res[i].Split(';')[2],
-                    int.Parse(res[i].Split(';')[3]),
-                    int.Parse(res[i].Split(';')[4]),
-                    int.Parse(res[i].Split(';')[5]));
+                string[] lineData = correcData[i].Split(';');
+                books[i] = new Book(
+                    int.Parse(lineData[0]),
+                    lineData[1],
+                    lineData[2],
+                    int.Parse(lineData[3]),
+                    int.Parse(lineData[4]),
+                    int.Parse(lineData[5]));
             }
+
             return books;
         }
 
         public static Reader[] GetReaders(string path)
         {
-            string[] lines = File.ReadAllLines(path);
+            string[] uncheckedData = File.ReadAllLines(path);
 
-            List<string> result = new();
-            for (int i = 1; i < lines.Length; i++)
+            List<string> correctData = new();
+            for (int i = 1; i < uncheckedData.Length; i++)
             {
-                Console.WriteLine($"Информация о {i} строке данных читателей: {GetInformationCorrectnessReaderData(lines[i].Split(';'))}");
-                if (GetInformationCorrectnessReaderData(lines[i].Split(';')) == "Данные в порядке.")
+                string correctness = GetInformationCorrectnessReaderData(uncheckedData[i].Split(';'));
+
+                Console.WriteLine($"Информация о {i} строке данных читателей: {correctness}");
+                if (correctness == "Данные в порядке.")
                 {
-                    result.Add(lines[i]);
+                    correctData.Add(uncheckedData[i]);
                 }
             }
 
-            string[] res = result.ToArray();
-            Reader[] readers = new Reader[res.Length];
-            for (int i = 0; i < res.Length; i++)
+            Reader[] readers = new Reader[correctData.Count];
+            for (int i = 0; i < correctData.Count; i++)
             {
-                readers[i] = new Reader(int.Parse(res[i].Split(';')[0]),
-                    res[i].Split(';')[1]);
+                string[] line = correctData[i].Split(";");
+                readers[i] = new Reader(int.Parse(line[0]), line[1]);
             }
+
             return readers;
         }
 
         public static BookReader[] GetBookReaders(string path,
             Book[] books, Reader[] readers)
         {
-            string[] lines = File.ReadAllLines(path);
+            string[] uncheckedData = File.ReadAllLines(path);
 
-            List<string> result = new();
-            for (int i = 1; i < lines.Length; i++)
+            List<string> correctData = new();
+            for (int i = 1; i < uncheckedData.Length; i++)
             {
-                Console.WriteLine($"Информация о {i} строке данных читателей книг: {GetInformationCorrectnessBookReaderData(lines[i].Split(';'))}");
-                if (GetInformationCorrectnessBookReaderData(lines[i].Split(';')) == "Данные в порядке.")
+                string correctness = GetInformationCorrectnessBookReaderData(uncheckedData[i].Split(';'));
+
+                Console.WriteLine($"Информация о {i} строке данных читателей книг: {correctness}");
+                if (correctness == "Данные в порядке.")
                 {
-                    result.Add(lines[i]);
+                    correctData.Add(uncheckedData[i]);
                 }
             }
 
-            string[] res = result.ToArray();
-            BookReader[] bookReaders = new BookReader[res.Length];
-            for (int i = 0; i < res.Length; i++)
+            BookReader[] bookReaders = new BookReader[correctData.Count];
+            for (int i = 0; i < correctData.Count; i++)
             {
-                bookReaders[i] = new BookReader(FindBook(books, int.Parse(res[i].Split(';')[0])),
-                    FindReader(readers, int.Parse(res[i].Split(';')[1])),
-                    DateTime.Parse(res[i].Split(';')[2]),
-                    DateTime.Parse(res[i].Split(';')[3]));
+                string[] lineData = correctData[i].Split(';');
+
+                bookReaders[i] = new BookReader(FindBook(books, int.Parse(lineData[0])),
+                    FindReader(readers, int.Parse(lineData[1])),
+                    DateTime.Parse(lineData[2]),
+
+                    lineData.Length == 3 ? null : DateTime.Parse(lineData[3]));
             }
 
             return bookReaders;
@@ -122,22 +130,22 @@ namespace DummyDB
 
             if (line.Length != 6)
             {
-                return "Количество столбцов данных не совпадает с требуемым количеством.\r\n";
+                return "Количество столбцов данных не совпадает с требуемым количеством.";
             }
             else
             {
-                List<int> columns = new();
+                List<int> wrongColumns = new();
 
                 if (!int.TryParse(line[0], out _))
                 {
-                    columns.Add(1);
+                    wrongColumns.Add(0);
                 }
 
                 for (int i = 1; i < 3; i++)
                 {
-                    if (line[i] is not string || double.TryParse(line[i], out _))
+                    if (line[i] == "")
                     {
-                        columns.Add(i);
+                        wrongColumns.Add(i);
                     }
                 }
 
@@ -145,28 +153,28 @@ namespace DummyDB
                 {
                     if (!int.TryParse(line[i], out _))
                     {
-                        columns.Add(i);
+                        wrongColumns.Add(i);
                     }
                 }
 
-                if (columns.Count > 0)
+                if (wrongColumns.Count > 0)
                 {
                     StringBuilder result = new();
                     result.Append("Данные не соответствуют требуемому формату в: ");
 
-                    for (int i = 0; i < columns.Count; i++)
+                    for (int i = 0; i < wrongColumns.Count; i++)
                     {
-                        if (i == columns.Count - 1)
+                        if (i == wrongColumns.Count - 1)
                         {
-                            result.Append(i + 1 + " ");
+                            result.Append((wrongColumns[i] + 1).ToString());
                         }
                         else
                         {
-                            result.Append(i + 1 + ", ");
+                            result.Append((wrongColumns[i] + 1).ToString() + ", ");
                         }
                     }
 
-                    result.Append("столбцах(-це).");
+                    result.Append(" столбцах(-це).");
                     return result.ToString();
                 }
                 else
@@ -180,40 +188,40 @@ namespace DummyDB
         {
             if (line.Length != 2)
             {
-                return "Количество столбцов данных не совпадает с требуемым количеством.\r\n";
+                return "Количество столбцов данных не совпадает с требуемым количеством.";
             }
             else
             {
-                List<int> columns = new();
+                List<int> wrongColumns = new();
 
                 if (!int.TryParse(line[0], out _))
                 {
-                    columns.Add(1);
+                    wrongColumns.Add(1);
                 }
 
-                if (line[1] is not string || double.TryParse(line[1], out _))
+                if (line[1] == "")
                 {
-                    columns.Add(2);
+                    wrongColumns.Add(2);
                 }
 
-                if (columns.Count > 0)
+                if (wrongColumns.Count > 0)
                 {
                     StringBuilder result = new();
                     result.Append("Данные не соответствуют требуемому формату в: ");
 
-                    for (int i = 0; i < columns.Count; i++)
+                    for (int i = 0; i < wrongColumns.Count; i++)
                     {
-                        if (i == columns.Count - 1)
+                        if (i == wrongColumns.Count - 1)
                         {
-                            result.Append(columns[i] + " ");
+                            result.Append(wrongColumns[i]);
                         }
                         else
                         {
-                            result.Append(columns[i] + ", ");
+                            result.Append(wrongColumns[i] + ", ");
                         }
                     }
 
-                    result.Append("столбцах(-це).");
+                    result.Append(" столбцах(-це).");
                     return result.ToString();
                 }
                 else
@@ -225,48 +233,48 @@ namespace DummyDB
 
         public static string GetInformationCorrectnessBookReaderData(string[] line)
         {
-            if (line.Length != 4)
+            if (line.Length < 3 || line.Length > 4)
             {
                 return "Количество столбцов данных не совпадает с требуемым количеством.\r\n";
             }
             else
             {
-                List<int> columns = new();
+                List<int> wrongColumns = new();
 
                 for (int i = 0; i < 2; i++)
                 {
                     if (!int.TryParse(line[i], out _))
                     {
-                        columns.Add(i);
+                        wrongColumns.Add(i);
                     }
                 }
 
-                for (int i = 2; i < 4; i++)
+                for (int i = 2; i < line.Length; i++)
                 {
                     if (!DateTime.TryParse(line[i], out _))
                     {
-                        columns.Add(i);
+                        wrongColumns.Add(i);
                     }
                 }
 
-                if (columns.Count > 0)
+                if (wrongColumns.Count > 0)
                 {
                     StringBuilder result = new();
-                    result.Append("Данные не соответствуют требуемому формату в: ");
 
-                    for (int i = 0; i < columns.Count; i++)
+                    result.Append("Данные не соответствуют требуемому формату в: ");
+                    for (int i = 0; i < wrongColumns.Count; i++)
                     {
-                        if (i == columns.Count - 1)
+                        if (i == wrongColumns.Count - 1)
                         {
-                            result.Append(columns[i] + 1 + " ");
+                            result.Append(wrongColumns[i] + 1);
                         }
                         else
                         {
-                            result.Append(columns[i] + 1 + ", ");
+                            result.Append(wrongColumns[i] + 1 + ", ");
                         }
                     }
 
-                    result.Append("столбцах(-це).");
+                    result.Append(" столбцах(-це).");
                     return result.ToString();
                 }
                 else
